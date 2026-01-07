@@ -433,7 +433,7 @@ export default function GenerateKeysPage() {
 
         <section className="grid gap-4 lg:grid-cols-2 items-start">
           {/* CONFIG */}
-          <Card className="overflow-hidden">
+<Card className="overflow-visible">
             <div className="border-b px-5 py-4" style={{ borderColor: BORDER }}>
               <div className="flex items-center gap-3">
                 <IconSquare>
