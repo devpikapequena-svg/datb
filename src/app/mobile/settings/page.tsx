@@ -213,7 +213,7 @@ export default function MobileSettingsPage() {
               <LayoutDashboard className="h-4 w-4" />
               <span>Home</span>
             </Link>
-            
+
             <Link href="/mobile/keys" className="flex flex-col items-center gap-1 text-white/60">
               <KeyRound className="h-4 w-4" />
               <span>Keys</span>

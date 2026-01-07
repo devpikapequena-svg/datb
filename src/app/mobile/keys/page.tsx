@@ -414,14 +414,6 @@ function KeyManageModal({
                 Remover
               </button>
             </div>
-
-            {!canManage ? (
-              <div className="mt-3 rounded-[10px] border px-3 py-2" style={{ borderColor: BORDER, background: 'rgba(255,255,255,0.02)' }}>
-                <p className="text-[11px]" style={{ color: TEXT_MUTED }}>
-                  Ações bloqueadas no plano <span style={{ color: DETAILS }}>none</span>.
-                </p>
-              </div>
-            ) : null}
           </div>
         </div>
 
@@ -446,7 +438,6 @@ export default function MobileKeysPage() {
   const [status, setStatus] = useState<'all' | KeyStatus>('all')
   const [statusOpen, setStatusOpen] = useState(false)
 
-  // ✅ pagination
   const [page, setPage] = useState(1)
   const keysPerPage = 10
 
@@ -499,11 +490,8 @@ export default function MobileKeysPage() {
       try {
         setLoadingData(true)
         const res = await fetch('/api/keys', { method: 'GET', credentials: 'include' })
-        if (res.ok) {
-          setData(await res.json())
-        } else {
-          setData({ role, keys: [] })
-        }
+        if (res.ok) setData(await res.json())
+        else setData({ role, keys: [] })
       } catch (e) {
         console.error(e)
         setData({ role, keys: [] })
@@ -527,7 +515,6 @@ export default function MobileKeysPage() {
     })
   }, [d.keys, q, status])
 
-  // ✅ reset page when filters change
   useEffect(() => {
     setPage(1)
   }, [q, status])
@@ -561,7 +548,9 @@ export default function MobileKeysPage() {
         const base = prev || d
         return {
           ...base,
-          keys: (base.keys || []).map((k) => (k.id === keyId ? { ...k, hwid: '', updatedAt: new Date().toISOString() } : k)),
+          keys: (base.keys || []).map((k) =>
+            k.id === keyId ? { ...k, hwid: '', updatedAt: new Date().toISOString() } : k,
+          ),
         }
       })
     } catch (e) {
@@ -588,7 +577,6 @@ export default function MobileKeysPage() {
     }
   }
 
-  // guards
   if (isMobile === false) {
     return (
       <main className="flex min-h-screen items-center justify-center bg-black text-white px-6">
@@ -610,8 +598,18 @@ export default function MobileKeysPage() {
 
   return (
     <div className="min-h-screen text-white" style={{ background: BG }}>
+      {/* ✅ Fix iOS zoom: garante 16px nos inputs no mobile */}
+      <style jsx global>{`
+        @supports (-webkit-touch-callout: none) {
+          input,
+          select,
+          textarea {
+            font-size: 16px !important;
+          }
+        }
+      `}</style>
+
       <main className="px-5 pt-6 pb-28">
-        {/* header */}
         <div className="mb-5">
           <p className="text-[11px]" style={{ color: TEXT_MUTED }}>
             Pages <span className="mx-1">/</span> Keys
@@ -634,7 +632,6 @@ export default function MobileKeysPage() {
           </div>
         </div>
 
-        {/* filters */}
         <Card className="p-4">
           <p className="text-[11px]" style={{ color: TEXT_MUTED }}>
             Buscar
@@ -645,17 +642,24 @@ export default function MobileKeysPage() {
             style={{ borderColor: BORDER, background: PANEL2 }}
           >
             <Search className="h-4 w-4" style={{ color: TEXT_MUTED }} />
-            <input
-              value={q}
-              onChange={(e) => setQ(e.target.value)}
-              placeholder="Buscar por chave ou HWID…"
-              className="h-full w-full bg-transparent text-[12px] outline-none"
-              style={{ color: TEXT_SOFT }}
-            />
+<input
+  value={q}
+  onChange={(e) => setQ(e.target.value)}
+  placeholder="Buscar por chave ou HWID…"
+  inputMode="search"
+  className="h-full w-full bg-transparent text-[12px] outline-none"
+  style={{ color: TEXT_SOFT }}
+/>
+
           </div>
 
           <div className="mt-3 flex items-center justify-between gap-3">
-            <Dropdown valueLabel={status === 'all' ? 'Todos' : statusLabel(status)} open={statusOpen} setOpen={setStatusOpen} label="Status">
+            <Dropdown
+              valueLabel={status === 'all' ? 'Todos' : statusLabel(status)}
+              open={statusOpen}
+              setOpen={setStatusOpen}
+              label="Status"
+            >
               <DropItem
                 label="Todos"
                 active={status === 'all'}
@@ -704,7 +708,6 @@ export default function MobileKeysPage() {
           </div>
         </Card>
 
-        {/* list */}
         <Card className="mt-4 p-4">
           <div className="flex items-center justify-between">
             <p className="text-[12px] font-semibold" style={{ color: 'rgba(255,255,255,0.88)' }}>
@@ -768,7 +771,6 @@ export default function MobileKeysPage() {
                 ))}
               </div>
 
-              {/* ✅ pagination buttons */}
               {filtered.length > 0 && totalPages > 1 ? (
                 <div className="mt-4 flex items-center justify-between gap-2 border-t pt-4" style={{ borderColor: BORDER }}>
                   <button
@@ -799,7 +801,6 @@ export default function MobileKeysPage() {
         </Card>
       </main>
 
-      {/* bottom nav */}
       <nav className="fixed inset-x-0 bottom-0 z-40 border-t bg-[#0b0b0b]" style={{ borderColor: BORDER }}>
         <div className="mx-auto max-w-md">
           <div className="flex items-center justify-around px-4 py-5 text-[11px]">
@@ -821,7 +822,6 @@ export default function MobileKeysPage() {
         </div>
       </nav>
 
-      {/* modals */}
       <KeyManageModal
         open={!!openId}
         onClose={() => setOpenId(null)}

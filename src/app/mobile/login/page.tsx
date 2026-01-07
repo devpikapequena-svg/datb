@@ -72,10 +72,7 @@ export default function LoginPage() {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
-  const canSubmit = useMemo(
-    () => !!email.trim() && !!password.trim() && !loading,
-    [email, password, loading],
-  )
+  const canSubmit = useMemo(() => !!email.trim() && !!password.trim() && !loading, [email, password, loading])
 
   async function handleSubmit(e: FormEvent) {
     e.preventDefault()
@@ -105,7 +102,7 @@ export default function LoginPage() {
         return
       }
 
-router.push('/mobile')
+      router.push('/mobile')
     } catch (err) {
       console.error(err)
       setError('Erro ao comunicar com o servidor.')
@@ -116,6 +113,17 @@ router.push('/mobile')
 
   return (
     <div className="relative min-h-screen overflow-hidden text-white" style={{ background: BG }}>
+      {/* ✅ Fix iOS zoom: garante 16px nos inputs no mobile */}
+      <style jsx global>{`
+        @supports (-webkit-touch-callout: none) {
+          input,
+          select,
+          textarea {
+            font-size: 16px !important;
+          }
+        }
+      `}</style>
+
       {/* ================= HEADER ================= */}
       <header className="relative z-20">
         <div className="mx-auto flex h-[78px] max-w-8xl items-center justify-between px-4 md:px-20">
@@ -162,7 +170,6 @@ router.push('/mobile')
 
       {/* ================= MAIN ================= */}
       <main className="relative z-10">
-        {/* ✅ SUBI O CONTEÚDO: pt menor no section e no container */}
         <section className="relative w-full overflow-hidden pb-72 pt-6 md:pt-10 md:pb-96">
           <div className="pointer-events-none absolute inset-0 -z-10">
             <Image src="/hero.png" alt="" fill priority className="object-cover object-[70%_18%] opacity-[1.05]" />
@@ -172,7 +179,6 @@ router.push('/mobile')
           <div className="mx-auto max-w-7xl px-4 pt-6 md:px-6 md:pt-12">
             <div className="mx-auto grid max-w-6xl items-center gap-12 md:grid-cols-2">
               <div className="max-w-xl">
-                {/* ✅ também reduzi esse mt */}
                 <h1 className="mt-3 text-[40px] leading-[1.06] tracking-[-0.03em] text-white/90 md:text-[54px]">
                   Bem-vindo de volta ao <span style={{ color: ACCENT }}>Database</span>
                 </h1>
@@ -196,7 +202,8 @@ router.push('/mobile')
                         onChange={(e) => setEmail(e.target.value)}
                         placeholder="seu@email.com"
                         autoComplete="email"
-                        className="h-12 w-full rounded-xl border border-white/10 bg-white/[0.03] px-4 text-[13px] text-white/90 outline-none placeholder:text-white/30"
+                        inputMode="email"
+                        className="h-12 w-full rounded-xl border border-white/10 bg-white/[0.03] px-4 text-[16px] md:text-[13px] text-white/90 outline-none placeholder:text-white/30"
                       />
                     </div>
 
@@ -214,7 +221,7 @@ router.push('/mobile')
                         onChange={(e) => setPassword(e.target.value)}
                         placeholder="••••••••"
                         autoComplete="current-password"
-                        className="h-12 w-full rounded-xl border border-white/10 bg-white/[0.03] px-4 text-[13px] text-white/90 outline-none placeholder:text-white/30"
+                        className="h-12 w-full rounded-xl border border-white/10 bg-white/[0.03] px-4 text-[16px] md:text-[13px] text-white/90 outline-none placeholder:text-white/30"
                       />
                     </div>
 

@@ -29,7 +29,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="pt-BR" suppressHydrationWarning>
       <head>
         <title>Database</title>
-        <meta name="description" content="Dashboard" />
+        <meta name="description" content="Database - Gerenciamento de keys" />
         <meta name="robots" content="index, follow" />
 
         <script

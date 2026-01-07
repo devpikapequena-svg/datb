@@ -11,7 +11,6 @@ import {
   Database,
   Users,
   Settings,
-  ArrowUpRight,
   Smartphone,
   LogOut,
 } from 'lucide-react'
@@ -103,7 +102,7 @@ function IconSquare({ children }: { children: React.ReactNode }) {
 function ProgressBar({ value }: { value: number }) {
   const v = clamp(value, 0, 100)
   return (
-    <div className="mt-2 h-1.5 w-full rounded-full overflow-hidden" style={{ background: 'rgba(255,255,255,0.06)' }}>
+    <div className="mt-2 h-1.5 w-full overflow-hidden rounded-full" style={{ background: 'rgba(255,255,255,0.06)' }}>
       <div className="h-full rounded-full" style={{ width: `${v}%`, background: ACCENT }} />
     </div>
   )
@@ -243,6 +242,18 @@ export default function MobileHomePage() {
       deltas: {},
     }
 
+  const kpis = [
+    { label: 'Projetos', value: o.projectsTotal, icon: FolderKanban, delta: o.deltas?.projects || '' },
+    { label: 'Coleções', value: o.collectionsTotal, icon: Database, delta: o.deltas?.collections || '' },
+    { label: 'Keys ativas', value: o.keysActiveTotal, icon: KeyRound, delta: o.deltas?.keys || '' },
+    {
+      label: 'Clientes',
+      value: o.role === 'client' ? '—' : o.linkedClientsTotal,
+      icon: Users,
+      delta: o.role === 'client' ? '' : o.deltas?.linkedClients || '',
+    },
+  ] as const
+
   return (
     <div className="min-h-screen text-white" style={{ background: BG }}>
       <main className="px-5 pt-6 pb-28">
@@ -283,7 +294,7 @@ export default function MobileHomePage() {
             Assinatura
           </p>
 
-          <div className="mt-2 flex items-center gap-2 flex-wrap">
+          <div className="mt-2 flex flex-wrap items-center gap-2">
             <p className="text-[14px] font-semibold">{plan.label}</p>
 
             <span
@@ -331,46 +342,33 @@ export default function MobileHomePage() {
           )}
         </Card>
 
-        {/* KPIs com IconSquare (igual desktop) */}
+        {/* KPIs (CARD NORMAL, SEM CLICK) */}
         <section className="mt-4 grid grid-cols-2 gap-3">
-          {[
-            { label: 'Projetos', value: o.projectsTotal, icon: FolderKanban, href: '/projects', delta: o.deltas?.projects || '' },
-            { label: 'Coleções', value: o.collectionsTotal, icon: Database, href: '/projects', delta: o.deltas?.collections || '' },
-            { label: 'Keys ativas', value: o.keysActiveTotal, icon: KeyRound, href: '/keys', delta: o.deltas?.keys || '' },
-            {
-              label: 'Clientes',
-              value: o.role === 'client' ? '—' : o.linkedClientsTotal,
-              icon: Users,
-              href: '/projects',
-              delta: o.role === 'client' ? '' : (o.deltas?.linkedClients || ''),
-            },
-          ].map((k) => {
+          {kpis.map((k) => {
             const Icon = k.icon
             return (
-              <Link key={k.label} href={k.href}>
-                <Card className="p-4 active:scale-[0.99] transition">
-                  <div className="flex items-start justify-between gap-3">
-                    <div className="min-w-0">
-                      <p className="text-[11px]" style={{ color: TEXT_MUTED }}>
-                        {k.label}
-                      </p>
+              <Card key={k.label} className="p-4">
+                <div className="flex items-start justify-between gap-3">
+                  <div className="min-w-0">
+                    <p className="text-[11px]" style={{ color: TEXT_MUTED }}>
+                      {k.label}
+                    </p>
 
-                      <div className="mt-2 flex items-end gap-2">
-                        <p className="text-[18px] font-semibold">{k.value as any}</p>
-                        {k.delta ? (
-                          <span className="text-[11px]" style={{ color: TEXT_MUTED }}>
-                            {k.delta}
-                          </span>
-                        ) : null}
-                      </div>
+                    <div className="mt-2 flex items-end gap-2">
+                      <p className="text-[18px] font-semibold">{k.value as any}</p>
+                      {k.delta ? (
+                        <span className="text-[11px]" style={{ color: TEXT_MUTED }}>
+                          {k.delta}
+                        </span>
+                      ) : null}
                     </div>
-
-                    <IconSquare>
-                      <Icon className="h-5 w-5 text-white" />
-                    </IconSquare>
                   </div>
-                </Card>
-              </Link>
+
+                  <IconSquare>
+                    <Icon className="h-5 w-5 text-white" />
+                  </IconSquare>
+                </div>
+              </Card>
             )
           })}
         </section>
@@ -382,7 +380,7 @@ export default function MobileHomePage() {
         ) : null}
       </main>
 
-      {/* bottom nav (sem blur / sem shadow) */}
+      {/* bottom nav */}
       <nav className="fixed inset-x-0 bottom-0 z-40 border-t bg-[#0b0b0b]" style={{ borderColor: BORDER }}>
         <div className="mx-auto max-w-md">
           <div className="flex items-center justify-around px-4 py-5 text-[11px]">
